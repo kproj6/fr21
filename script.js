@@ -15,8 +15,6 @@ var attribution = new ol.Attribution({
   'services/Demographics/USA_Population_Density/MapServer/">ArcGIS</a>'
 });
 
-var trondheim = [63.455013, 10.448412];
-
 var layer = new ol.layer.Tile({
   source: new ol.source.MapQuest({layer: 'sat'})
 });
@@ -39,14 +37,30 @@ var usPopDensity = new ol.layer.Tile({
     }),
     style: 'default'
     })
-})
+});
+
+var pixelProjection = new ol.proj.Projection({
+  code: 'pixel',
+  units: 'pixels',
+  extent: [0, 0, 487, 464]
+});
+
+
+var salinityLayer = new ol.layer.Image({
+  source: new ol.source.ImageStatic({
+    url: 'http://178.62.233.73:10100/feature/salinity?startLat=65.24&startLon=7.56&endLat=65.42&endLon=9.542&depth=2&time=2013-08-05',
+    imageSize: [487, 464],
+    projection: pixelProjection,
+    imageExtent: pixelProjection.getExtent()
+  })
+});
 
 var map = new ol.Map({
   target: 'map',
   layers: [layer, usPopDensity],
   view: new ol.View({
-  center: [-11158582, 4813697],  
-  zoom: 4
+    center: [-11158582, 4813697],  
+    zoom: 4,
   })
 });
 
