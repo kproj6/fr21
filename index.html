@@ -2,14 +2,21 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="http://openlayers.org/en/v3.0.0/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="bower_components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="style.css">
   <title>OpenLayers 3 example</title>
 </head>
 <body>
   <div class="container">
-    <div class="controls">
+    <div id="controls">
+      <span 
+        id="toggleControls" 
+        class="mega-octicon octicon-three-bars"></span>
       <label for="visible">Population density visible</label>
       <input type="checkbox" id="visible">
+      <label for="salinity">Salinity</label>
+      <input type="checkbox" id="salinity">
+      <input type="range" name="depth" min="0" max="10" step="2">
     </div>
     <div id="map" class="map"></div>
   </div>

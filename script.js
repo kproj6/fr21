@@ -52,3 +52,15 @@ var map = new ol.Map({
 
 var visible = new ol.dom.Input(document.getElementById('visible'));
 visible.bindTo('checked', usPopDensity, 'visible');
+
+//toggle Controls
+var toggleControls = document.getElementById('toggleControls');
+var controls = document.getElementById('controls');
+toggleControls.addEventListener('click', function(){
+  var cl = controls.classList;
+  if(cl.contains('showControls')){
+    cl.remove('showControls');
+  } else {
+    cl.add('showControls');
+  }
+},false);
