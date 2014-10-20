@@ -12,8 +12,16 @@
       <span 
         id="toggleControls" 
         class="mega-octicon octicon-three-bars"></span>
+      <div>
       <label for="visible">Salinity visible</label>
       <input type="checkbox" id="visible">
+      <br>
+      <label for="depth">Depth</label>
+      <input type="number" name="depth" id="depth" min="0" max="120" step="1" value="1">
+      <br>
+      <label for="start">Date</label>
+      <input type="date" name="start" id="start">
+      </div>
     </div>
     <div id="map" class="map"></div>
   </div>
