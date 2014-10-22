@@ -11,9 +11,22 @@
     <div id="controls">
       <span 
         id="toggleControls" 
-        class="mega-octicon octicon-three-bars"></span>
-      <label for="visible">Salinity visible</label>
-      <input type="checkbox" id="visible">
+        class="mega-octicon octicon-three-bars">
+      </span>
+     <label for="measure">Measure</label>
+     <select id="measure" name="">
+       <option value="salinity">Salinity</option>
+       <option value="temperature">Temperature</option>
+       <option value="curent">Curent</option>
+     </select>
+     <label for="debth">Debth in metres</label>
+     <input type="number" id="debth" placeholder="2">
+     <label for="date">date</label>
+     <input type="date" id="date" placeholder="yyyy-mm-dd">
+     <label for="startCoord">Start Coordinates</label>
+     <input type="text" id="startCoord" placeholder="0.0,1.1">
+     <label for="endCoord">End coordinates</label>
+     <input type="text" id="endCoord" placeholder="0.0,1.1">
     </div>
     <div id="map" class="map"></div>
   </div>

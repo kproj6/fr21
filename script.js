@@ -1,5 +1,16 @@
 'use scrict';
 
+function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
+   var url = 'http://178.62.233.73:10100/feature/' + measure +
+    '?startLat=' + startLat + 
+    '&startLon=' + startLon + 
+    '&endLat=' + endLat +
+    '&endLon=' + endLon + 
+    '&depth=' + depth + 
+    '&time=' + date;
+    return url;
+}
+
 var map = new ol.Map({
   target: 'map',  // The DOM element that will contains the map
     renderer: 'canvas', // Force the renderer to be used
@@ -29,47 +40,6 @@ var imageLayer = new ol.layer.Image({
 
 map.addLayer(imageLayer);
 
-var projection = ol.proj.get('EPSG:3857');
-var projectionExtent = projection.getExtent();
-var size = ol.extent.getWidth(projectionExtent) / 256;
-var resolutions = new Array(14);
-var matrixIds = new Array(14);
-
-for (var z = 0; z < 14; ++z) {
-  resolutions[z] = size / Math.pow(2, z);
-  matrixIds[z] = z;
-}
-var attribution = new ol.Attribution({
-  html: 'Tiles &copy; <a href="http://services.arcgisonline.com/arcgis/rest/' +
-  'services/Demographics/USA_Population_Density/MapServer/">ArcGIS</a>'
-});
-
-var wmts = new ol.layer.Tile({
-  opacity: 0.7,
-    extent: projectionExtent,
-    source: new ol.source.WMTS({
-      attributions: [attribution],
-    url: 'http://services.arcgisonline.com/arcgis/rest/' +
-      'services/Demographics/USA_Population_Density/MapServer/WMTS/',
-    layer: '0',
-    matrixSet: 'EPSG:3857',
-    format: 'image/png',
-    projection: projection,
-    tileGrid: new ol.tilegrid.WMTS({
-      origin: ol.extent.getTopLeft(projectionExtent),
-    resolutions: resolutions,
-    matrixIds: matrixIds
-    }),
-    style: 'default'
-  })
-});
-
-map.addLayer(wmts);
-
-//bind checkbox to imageLayer visibility
-var visible = new ol.dom.Input(document.getElementById('visible'));
-visible.bindTo('checked', imageLayer, 'visible');
-
 //toggle custom Controls
 var toggleControls = document.getElementById('toggleControls');
 var controls = document.getElementById('controls');
@@ -81,3 +51,43 @@ toggleControls.addEventListener('click', function(){
     cl.add('showControls');
   }
 },false);
+
+//fr 2.2 stuff
+var debth = document.getElementById('debth');
+var measure = document.getElementById('measure');
+var date = document.getElementById('date');
+var startCoord = document.getElementById('startCoord');
+var endCoord = document.getElementById('endCoord');
+var startCoordValue;
+
+var dragBox; // global so we can remove it later
+
+function addDragBox() {
+  dragBox = new ol.interaction.DragBox({
+    condition: ol.events.condition.shiftKeyOnly,
+    style: new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: [0, 0, 0, 1]
+      })
+    })
+  });
+  map.addInteraction(dragBox);
+}
+
+addDragBox();
+
+dragBox.on('boxstart', function(evt){
+  startCoordValue = evt.coordinate;
+});
+
+dragBox.on('boxend', function(evt){
+  startCoord.value = startCoordValue.toString();
+  endCoord.value = evt.coordinate.toString();
+  var start = startCoord.value.split(',', 2);
+  var startLat = start[0]; 
+  var startLon = start[1]; 
+  var end = endCoord.value.split(',', 2);
+  var endLat = end[0];
+  var endLon = end[1];
+  console.log(buildUrl(measure.value, startLat, startLon, endLat, endLon, debth.value, date.value));
+});
