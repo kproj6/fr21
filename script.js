@@ -6,6 +6,7 @@ var date = document.getElementById('date');
 var startCoord = document.getElementById('startCoord');
 var endCoord = document.getElementById('endCoord');
 var submit = document.getElementById('submit');
+var form = document.getElementById('form');
 var startCoordValue;
 
 function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
@@ -87,7 +88,8 @@ function addDragBox() {
 }
 
 addDragBox();
-submit.addEventListener('click', function(){
+submit.addEventListener('click', function(evt){
+  evt.preventDefault();
   var start = startCoord.value.split(',', 2);
   var startLat = start[0]; 
   var startLon = start[1]; 
@@ -95,7 +97,12 @@ submit.addEventListener('click', function(){
   var endLat = end[0];
   var endLon = end[1];
   var url = buildUrl(measure.value, startLat, startLon, endLat, endLon, debth.value, date.value);
-  console.log(url);
-  updateImage(url);
+  if(form.checkValidity()){
+    console.log(url);
+    updateImage(url);
+  }else{
+    console.log('updateImage() did not get the right parameters');
+  }
+
 },false)
 

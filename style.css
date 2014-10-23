@@ -44,7 +44,7 @@ body {
   right:0;
 }
 
-#controls > * {
+#controls > form > * {
   display: block;
   margin: 5px 10px;
 }
@@ -56,4 +56,16 @@ body {
   margin-left: -44px;
   margin-top: 0;
   cursor: pointer;
+}
+
+#controls > form > #submit {
+  margin-top: 10px;
+}
+
+.tip{
+  text-align: center;
+  margin: 5px;
+  border-radius: 5px;
+  padding:3px;
+
 }
