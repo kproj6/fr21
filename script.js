@@ -10,7 +10,7 @@ var form = document.getElementById('form');
 var startCoordValue;
 
 function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
-   var url = 'http://178.62.233.73:10100/feature/' + measure +
+   var url = 'http://178.62.233.73:10100/feature/' + measure + '/area' +
     '?startLat=' + startLat + 
     '&startLon=' + startLon + 
     '&endLat=' + endLat +
@@ -40,7 +40,7 @@ function updateImage(url){
     map.getLayers().remove(imageLayer);
   }
   imageLayer = new ol.layer.Image({
-    opacity: 0.75,
+    opacity: 0.95,
     source: new ol.source.ImageStatic({
       url: url,
       imageSize: [691, 541], // change to correct size

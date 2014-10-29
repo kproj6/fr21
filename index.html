@@ -19,16 +19,17 @@
         <select id="measure" name="">
           <option value="salinity">Salinity</option>
           <option value="temperature">Temperature</option>
-          <option value="curent">Curent</option>
+          <option value="current-magnitude">Curent</option>
+          <option value="depth">Depth</option>
         </select>
         <label for="debth">Debth in metres</label>
-        <input type="number" id="debth" placeholder="2" required>
+        <input type="number" id="debth" value="2" required>
         <label for="date">date</label>
-        <input type="date" id="date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" required>
+        <input type="date" id="date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" value="2013-08-05" required>
         <label for="startCoord">Start Coordinates</label>
-        <input type="text" id="startCoord" placeholder="0.0,1.1" required>
+        <input type="text" id="startCoord" value="65.24,7.56" placeholder="0.0,1.1" required>
         <label for="endCoord">End coordinates</label>
-        <input type="text" id="endCoord" placeholder="0.0,1.1" required>
+        <input type="text" id="endCoord" value="65.42,9.542" placeholder="0.0,1.1" required>
         <button id="submit">Submit</button>
       </form>
     </div>
