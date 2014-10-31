@@ -1,6 +1,6 @@
 'use scrict';
 var imageLayer; // global so we can removed it later
-var debth = document.getElementById('debth');
+var depth = document.getElementById('depth');
 var measure = document.getElementById('measure');
 var date = document.getElementById('date');
 var startCoord = document.getElementById('startCoord');
@@ -9,8 +9,10 @@ var submit = document.getElementById('submit');
 var form = document.getElementById('form');
 var startCoordValue;
 
+// this function needs to be altered so it inserts 'area' and 'verticalProfile'
+// when needed
 function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
-   var url = 'http://178.62.233.73:10100/feature/' + measure +
+   var url = 'http://178.62.233.73:10100/feature/' + measure + '/area/' +
     '?startLat=' + startLat + 
     '&startLon=' + startLon + 
     '&endLat=' + endLat +
@@ -96,7 +98,7 @@ submit.addEventListener('click', function(evt){
   var end = endCoord.value.split(',', 2);
   var endLat = end[0];
   var endLon = end[1];
-  var url = buildUrl(measure.value, startLat, startLon, endLat, endLon, debth.value, date.value);
+  var url = buildUrl(measure.value, startLat, startLon, endLat, endLon, depth.value, date.value);
   if(form.checkValidity()){
     console.log(url);
     updateImage(url);
