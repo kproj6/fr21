@@ -93,12 +93,18 @@ function addDragBox() {
 
     startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
     endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
-    console.log("After projecting: "+startCoord.value+" - "+endCoord.value);
+    console.log("After projecting to LatLong: "+startCoord.value+" - "+endCoord.value);
 
-    proj4.defs("EPSG:9810", "+proj=stere +lat_0=0 +lat_ts=0 +lon_0=0 +k=0 +x_0=0 +y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs");
-    var polarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
-    console.log("After projecting to PS-A: "+polarCoord);
-    console.log("After projecting back again: "+ proj4('EPSG:9810', 'WGS84', polarCoord));
+    proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
+    var startPolarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
+    var endPolarCoord = proj4('EPSG:3785', 'EPSG:9810', evt.coordinate);
+    console.log("After projecting from EPSG:3785 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
+    console.log("After projecting back again to EPSG:3785: "+ proj4('EPSG:9810', 'EPSG:3785', startPolarCoord) + " - " + proj4('EPSG:9810', 'EPSG:3785', endPolarCoord) );
+    
+    var startPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', startCoordValue));
+    var endPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', evt.coordinate));
+    console.log("After projecting from WGS84 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
+    console.log("After projecting back again to WGS84: "+ proj4('EPSG:9810', 'EPSG:4326', startPolarCoord).reverse() + " - " + proj4('EPSG:9810', 'EPSG:4326', endPolarCoord).reverse() );
 
   });
 }
