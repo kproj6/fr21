@@ -70,6 +70,7 @@ toggleControls.addEventListener('click', function(){
 
 //fr 2.2 stuff
 
+
 function addDragBox() {
   dragBox = new ol.interaction.DragBox({
     condition: ol.events.condition.shiftKeyOnly,
@@ -84,8 +85,16 @@ function addDragBox() {
     startCoordValue = evt.coordinate;
   });
   dragBox.on('boxend', function(evt){
-    startCoord.value = startCoordValue.toString();
-    endCoord.value = evt.coordinate.toString();
+    //console.log("Before projecting: "+startCoordValue+" - "+evt.coordinate);
+
+    //startCoord.value = ol.proj.transform(startCoordValue, 'EPSG:3857', 'EPSG:4326');
+    //endCoord.value = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+    proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
+
+    startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
+    endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
+    //console.log("After projecting: "+startCoord.value+" - "+endCoord.value);
+    
   });
 }
 

@@ -21,8 +21,8 @@
           <option value="current-magnitude">Curent</option>
           <option value="depth">Depth</option>
         </select>
-        <label for="debth">Debth in metres</label>
-        <input type="number" id="debth" value="2" required>
+        <label for="depth">Debth in metres</label>
+        <input type="number" id="depth" value="2" required>
         <label for="date">date</label>
         <input type="date" id="date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" value="2013-08-05" required>
         <label for="startCoord">Start Coordinates</label>
@@ -35,6 +35,7 @@
     <div id="map" class="map"></div>
   </div>
   <script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>
+  <script src="proj4.js"> </script>
   <script src="script.js"> </script>
 </body>
 </html>
