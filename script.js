@@ -7,6 +7,7 @@ var startCoord = document.getElementById('startCoord');
 var endCoord = document.getElementById('endCoord');
 var submit = document.getElementById('submit');
 var form = document.getElementById('form');
+var infoBar = document.getElementById('infoBar');
 var startCoordValue;
 
 // this function needs to be altered so it inserts 'area' and 'verticalProfile'
@@ -68,9 +69,6 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
-//fr 2.2 stuff
-
-
 function addDragBox() {
   dragBox = new ol.interaction.DragBox({
     condition: ol.events.condition.shiftKeyOnly,
@@ -103,7 +101,17 @@ function addDragBox() {
   });
 }
 
+function displayInfo(){
+  infoBar.innerHTML =
+  '<span>Feature: </span>' + measure.value +
+  '<span>Depth: </span>' + depth.value +
+  '<span>Date: </span>' + date.value +
+  '<span>Start Coords: </span>' + startCoord.value +
+  '<span>End Coords: </span>' + endCoord.value
+}
+
 addDragBox();
+
 submit.addEventListener('click', function(evt){
   evt.preventDefault();
   var start = startCoord.value.split(',', 2);
@@ -115,6 +123,7 @@ submit.addEventListener('click', function(evt){
   var url = buildUrl(measure.value, startLat, startLon, endLat, endLon, depth.value, date.value);
   if(form.checkValidity()){
     console.log(url);
+    displayInfo();
     updateImage(url);
   }else{
     console.log('updateImage() did not get the right parameters');

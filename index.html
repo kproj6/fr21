@@ -25,13 +25,14 @@
         <input type="number" id="depth" value="2" required>
         <label for="date">date</label>
         <input type="date" id="date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" value="2013-08-05" required>
-        <label for="startCoord">Start Coordinates</label>
+        <label for="startCoord">Start Coordinates (lat, lon)</label>
         <input type="text" id="startCoord" value="65.24,7.56" placeholder="0.0,1.1" required>
-        <label for="endCoord">End coordinates</label>
+        <label for="endCoord">End coordinates (lat, lon)</label>
         <input type="text" id="endCoord" value="65.42,9.542" placeholder="0.0,1.1" required>
         <button id="submit">Submit</button>
       </form>
     </div>
+    <div id="infoBar"></div>
     <div id="map" class="map"></div>
   </div>
   <script src="http://openlayers.org/en/v3.0.0/build/ol.js" type="text/javascript"></script>
