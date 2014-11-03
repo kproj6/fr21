@@ -13,6 +13,14 @@ body {
   overflow: hidden;
 }
 
+button {
+  background: #fff;
+  color: #3f3f3f;
+  border-radius; 5px;
+  padding: 3px;
+  border: 1px #3f3f3f solid;
+}
+
 .container{
   position:absolute;
   top: 0;
@@ -29,43 +37,69 @@ body {
 
 #controls {
   background-color:#fff ;
-  padding: 0 10px 10px 0;
-  border-radius: 0 0 0 5px;
+  padding: 10px 30px 10px 10px;
+  border-radius: 10px 10px 0 0;
   z-index: 9999;
   position: absolute;
-  top: 15px;
-  right: 0px;
+  bottom: -375px;
+  left: 20px;
   min-width: 240px;
   max-width: 320px;
-  transition: right 1s;
+  transition: bottom 1s;
 }
 
 #controls.showControls {
-  right:0;
+  margin-bottom:35px;
+  bottom: 0 !important;
+}
+
+.controlDebug{
+  bottom: 0;
 }
 
 #controls > form > * {
   display: block;
   margin: 5px 10px;
+  border: 1px solid #3f3f3f;
+  border-radius: 5px;
+  background: #fff;
+  padding: 5px;
+  width: 100%;
+}
+
+#controls > form > label {
+  border: 0;
 }
 
 #toggleControls {
+  position: absolute;
+  top: -44px;
+  left: 0;
   background-color: inherit;
-  border-radius: 5px 0 0 5px;
+  border-radius: 5px 5px 0 0;
   padding: 10px;
-  margin-left: -44px;
   margin-top: 0;
   cursor: pointer;
 }
 
 #controls > form > #submit {
+  cursor: pointer;
   margin-top: 10px;
 }
 
-.tip{
+#infoBar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 35px;
+  width: 100%;
+  z-index: 9999;
+  background: #fff;
   text-align: center;
-  margin: 5px;
-  border-radius: 5px;
-  padding:3px;
+  line-height: 35px;
+}
 
+#infoBar span {
+  font-weight: 600;
+  margin-left: 15px;
 }
