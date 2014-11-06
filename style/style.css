@@ -19,6 +19,7 @@ button {
   border-radius; 5px;
   padding: 3px;
   border: 1px #3f3f3f solid;
+  cursor: pointer;
 }
 
 .container{
@@ -41,7 +42,7 @@ button {
   border-radius: 10px 10px 0 0;
   z-index: 9999;
   position: absolute;
-  bottom: -375px;
+  bottom: -473px;
   left: 20px;
   min-width: 240px;
   max-width: 320px;
@@ -53,10 +54,6 @@ button {
   bottom: 0 !important;
 }
 
-.controlDebug{
-  bottom: 0;
-}
-
 #controls > form > * {
   display: block;
   margin: 5px 10px;
@@ -65,6 +62,12 @@ button {
   background: #fff;
   padding: 5px;
   width: 100%;
+}
+
+#controls > form > #areaSelect {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
 }
 
 #controls > form > label {
@@ -102,4 +105,54 @@ button {
 #infoBar span {
   font-weight: 600;
   margin-left: 15px;
+}
+
+/** rules for the popup */
+.ol-popup {
+  display: none;
+  position: absolute;
+  background-color: white;
+  -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+}
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+}
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
+}
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
+.ol-popup-closer:after {
+  content: "✖";
+}
+
+.buttonActive {
+  background-color: #3f3f3f !important;
+  color: #fff;
 }

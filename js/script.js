@@ -8,7 +8,40 @@ var endCoord = document.getElementById('endCoord');
 var submit = document.getElementById('submit');
 var form = document.getElementById('form');
 var infoBar = document.getElementById('infoBar');
+var areaSelectButton = document.getElementById('areaSelect');
 var startCoordValue;
+var areaSelectActive = false;
+var dragBox;
+
+// wehn working on the controls it's nice that it pops up it automatically
+if(document.getElementById('controls').hasAttribute('debug')){
+  document.getElementById('controls').classList.add('showControls');
+}
+
+/**
+ * Elements that make up the popup.
+ */
+var container = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
+
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+closer.onclick = function() {
+  container.style.display = 'none';
+  closer.blur();
+  return false;
+};
+
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+var overlay = new ol.Overlay({
+  element: container
+});
 
 // this function needs to be altered so it inserts 'area' and 'verticalProfile'
 // when needed
@@ -32,6 +65,7 @@ var map = new ol.Map({
         source: new ol.source.OSM()
       })
     ],
+    overlays: [overlay],
     view: new ol.View({
       center: ol.proj.transform([8.8, 63.75], 'EPSG:4326', 'EPSG:3857'),
       zoom:9
@@ -69,9 +103,10 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
-function addDragBox() {
+function addDragBox(conditionObj) {
+  var conditionObj = conditionObj || ol.events.condition.never;
   dragBox = new ol.interaction.DragBox({
-    condition: ol.events.condition.shiftKeyOnly,
+    condition: conditionObj,
     style: new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: [0, 0, 0, 1]
@@ -116,8 +151,7 @@ function displayInfo(){
   '<span>End Coords: </span>' + endCoord.value
 }
 
-addDragBox();
-
+//listener for submit button
 submit.addEventListener('click', function(evt){
   evt.preventDefault();
   var start = startCoord.value.split(',', 2);
@@ -132,8 +166,42 @@ submit.addEventListener('click', function(evt){
     displayInfo();
     updateImage(url);
   }else{
-    console.log('updateImage() did not get the right parameters');
+    var args = Array.slice(arguments);
+    console.log(args);
+    for (var i = 0; i < args.length; i++) {
+      if(args[i] === null) {
+        console.log(args[i]);
+      }
+    }
+    console.error('updateImage() did not get the right parameters');
   }
 
-},false)
+},false);
 
+/**
+ * Add a click handler to the map to render the popup.
+ */
+map.on('click', function(evt) {
+  var coordinate = evt.coordinate;
+  var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+      coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+  overlay.setPosition(coordinate);
+  content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
+      '</code>';
+  container.style.display = 'block';
+
+});
+
+// listener for areaSelect tool
+areaSelectButton.addEventListener('click', function(evt){
+  evt.preventDefault();
+  areaSelectActive = !areaSelectActive;
+  if(areaSelectActive){
+    areaSelectButton.classList.add('buttonActive');
+    addDragBox(ol.events.condition.always);
+  } else {
+    areaSelectButton.classList.remove('buttonActive');
+    map.removeInteraction(dragBox);
+  }
+}, false);
