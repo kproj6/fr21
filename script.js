@@ -10,6 +10,31 @@ var form = document.getElementById('form');
 var infoBar = document.getElementById('infoBar');
 var startCoordValue;
 
+/**
+ * Elements that make up the popup.
+ */
+var container = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
+
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+closer.onclick = function() {
+  container.style.display = 'none';
+  closer.blur();
+  return false;
+};
+
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+var overlay = new ol.Overlay({
+  element: container
+});
+
 // this function needs to be altered so it inserts 'area' and 'verticalProfile'
 // when needed
 function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
@@ -32,6 +57,7 @@ var map = new ol.Map({
         source: new ol.source.OSM()
       })
     ],
+    overlays: [overlay],
     view: new ol.View({
       center: ol.proj.transform([8.8, 63.75], 'EPSG:4326', 'EPSG:3857'),
       zoom:9
@@ -135,5 +161,21 @@ submit.addEventListener('click', function(evt){
     console.log('updateImage() did not get the right parameters');
   }
 
-},false)
+},false);
+
+
+/**
+ * Add a click handler to the map to render the popup.
+ */
+map.on('click', function(evt) {
+  var coordinate = evt.coordinate;
+  var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+      coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+  overlay.setPosition(coordinate);
+  content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
+      '</code>';
+  container.style.display = 'block';
+
+});
 
