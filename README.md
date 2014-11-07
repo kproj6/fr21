@@ -28,7 +28,7 @@ to install icons install Bower
 
 ##other gulp stuff
 ```gulp build```
-will copy files from the src folder and bomwer_components folder to the dist folder.
+will copy files from the src folder and bower_components folder to the dist folder.
 
 When running the local server on localhost:8080 it's root dir is dist/
 
