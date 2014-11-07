@@ -1,16 +1,35 @@
-# Functional requirement 2.1
-## Get a map up and running
+#Read this before you commit
 
-this is a early prototype of the map user interface 
+**All changes must be made in the ```src``` folder**
 
-if you have nodeJS installed run 
+The repository is set up you use gulpJS. This is done so we can  do stuff like keep styling in modules using sass, so we can uglify and minify automatically and to reload the browser when we change files.
+
+This requires that you have [NodeJS](www.nodejs.org) installed.
+
+In the repository folder:
+
+to install dependencies run.
 ```
   npm install
 ```
-to install dependencies.
 
-then run
+then, to copy all necessary file to the dist folder and run a server on http://localhost:8080. Now every time you make changes to a html, css or js file in the src subfolders the browser will reload run. 
 ```
   gulp
 ```
-to run a server on http://localhost:8080, and have the browser reload every time you make changes to a html, css or js file.
+
+
+
+to install icons install Bower
+```
+  npm install bower -g
+  bower install
+```
+
+##other gulp stuff
+```gulp build```
+will copy files from the src folder and bower_components folder to the dist folder.
+
+When running the local server on localhost:8080 it's root dir is dist/
+
+see ```gulpfile.js``` for all commands and setup.

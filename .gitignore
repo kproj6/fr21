@@ -1,4 +1,7 @@
+*.swn
 *.swo
 *.swp
-/node_modules
-/bower_components
+*.log
+node_modules/
+bower_components/
+dist/
