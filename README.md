@@ -23,11 +23,6 @@ then, to copy all necessary file to the dist folder and run a server on http://l
 to install icons install Bower
 ```
   npm install bower -g
-
-```
-then run
-
-```
   bower install
 ```
 
