@@ -1,0 +1,142 @@
+* {
+  box-sizing: border-box; }
+
+html {
+  font-family: sans-serif;
+  font-weight: 300; }
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; }
+
+button {
+  background: #fff;
+  color: #3f3f3f;
+  border-radius: 5px;
+  padding: 3px;
+  border: 1px #3f3f3f solid;
+  cursor: pointer; }
+
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+.map {
+  position: relative;
+  height: 100%;
+  width: 100%; }
+
+#controls {
+  background-color: #fff;
+  padding: 10px 30px 10px 10px;
+  border-radius: 10px 10px 0 0;
+  z-index: 9999;
+  position: absolute;
+  bottom: -473px;
+  left: 20px;
+  min-width: 240px;
+  max-width: 320px;
+  transition: bottom 1s; }
+
+#controls.showControls {
+  margin-bottom: 35px;
+  bottom: 0 !important; }
+
+#controls > form > * {
+  display: block;
+  margin: 5px 10px;
+  border: 1px solid #3f3f3f;
+  border-radius: 5px;
+  background: #fff;
+  padding: 5px;
+  width: 100%; }
+
+#controls > form > #areaSelect {
+  width: 50px;
+  height: 50px;
+  display: inline-block; }
+
+#controls > form > label {
+  border: 0; }
+
+#toggleControls {
+  position: absolute;
+  top: -44px;
+  left: 0;
+  background-color: inherit;
+  border-radius: 5px 5px 0 0;
+  padding: 10px;
+  margin-top: 0;
+  cursor: pointer; }
+
+#controls > form > #submit {
+  cursor: pointer;
+  margin-top: 10px; }
+
+#infoBar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 35px;
+  width: 100%;
+  z-index: 9999;
+  background: #fff;
+  text-align: center;
+  line-height: 35px; }
+
+#infoBar span {
+  font-weight: 600;
+  margin-left: 15px; }
+
+.buttonActive {
+  background-color: #3f3f3f !important;
+  color: #fff; }
+
+/** rules for the popup */
+.ol-popup {
+  display: none;
+  position: absolute;
+  background-color: white;
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  width: 220px; }
+
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none; }
+
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px; }
+
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px; }
+
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px; }
+
+.ol-popup-closer:after {
+  content: "✖"; }
