@@ -2,7 +2,7 @@
 
 **All changes must be made in the ```src``` folder**
 
-The repository is set up you use gulpJS. This is done so we can  done stuff like keep styling in modules using sass, so we can uglify and minify automatically and to reload the browser when we change files.
+The repository is set up you use gulpJS. This is done so we can  do stuff like keep styling in modules using sass, so we can uglify and minify automatically and to reload the browser when we change files.
 
 This requires that you have [NodeJS](www.nodejs.org) installed.
 
