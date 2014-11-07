@@ -1,7 +1,6 @@
-# Functional requirement 2.2
-## Show data for selected area
+#Read this before you commit
 
-this is a early prototype of the map user interface 
+The repository is set up you use gulpJS. This is done so we can  done stuff like keep styling in modules using sass, so we can uglify and minify automatically and to reload the browser when we change files.
 
 if you have nodeJS installed run 
 ```
@@ -14,7 +13,7 @@ then run
   gulp
 ```
 
-to run a server on http://localhost:8080, and have the browser reload every time you make changes to a html, css or js file.
+to copy all necessary file to the dist folder and run a server on http://localhost:8080. Now every time you make changes to a html, css or js file in the src subfolders the browser will reload.
 
 to install icons install Bower
 ```
@@ -27,9 +26,3 @@ then run
   bower install
 ```
 in the repo directory
-
-
-## How to use the GUI
-write input in the ipunt fields and press submit to send a request to the backend
-
-To fill in coordinates you can hold shift and drag a box. This will fill in the coordinate values of the box. The values are not converted to the right projection at the moment
