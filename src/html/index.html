@@ -21,9 +21,9 @@
           <option value="current-magnitude">Curent</option>
           <option value="depth">Depth</option>
         </select>
-        <label for="depth">Debth in metres</label>
+        <label for="depth">Depth in metres</label>
         <input type="number" id="depth" value="2" required>
-        <label for="date">date</label>
+        <label for="date">Date</label>
         <input 
           type="date" 
           id="date" 
@@ -32,6 +32,11 @@
           value="2013-08-05" 
           required
         >
+        <label for=fader>Time</label>
+        <span>
+          <input type="range" min=0 max=23 value=12 id="time" step=1>
+          <output for="time" id="timeslider">12.00</output>
+        </span>
         <label for="areaSelect">Area selector</label>
         <button id="areaSelect">
           <span class="mega-octicon octicon-globe"></span>

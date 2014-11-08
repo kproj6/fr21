@@ -3,24 +3,12 @@ var imageLayer; // global so we can removed it later
 var depth = document.getElementById('depth');
 var measure = document.getElementById('measure');
 var date = document.getElementById('date');
-var time = document.getElementById('timeslider');
 var startCoord = document.getElementById('startCoord');
 var endCoord = document.getElementById('endCoord');
 var submit = document.getElementById('submit');
 var form = document.getElementById('form');
 var infoBar = document.getElementById('infoBar');
-var areaSelectButton = document.getElementById('areaSelect');
 var startCoordValue;
-var areaSelectActive = false;
-var dragBox;
-var toggleControls = document.getElementById('toggleControls');
-var controls = document.getElementById('controls');
-proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
-
-// when working on the controls it's nice that it pops up it automatically
-if(document.getElementById('controls').hasAttribute('debug')){
-  document.getElementById('controls').classList.add('showControls');
-}
 
 /**
  * Elements that make up the popup.
@@ -31,8 +19,8 @@ var closer = document.getElementById('popup-closer');
 
 
 /**
- * @return {boolean} Don't follow the href.
  * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
  */
 closer.onclick = function() {
   container.style.display = 'none';
@@ -43,10 +31,9 @@ closer.onclick = function() {
 /**
  * Create an overlay to anchor the popup to the map.
  */
-var popupOverlay = new ol.Overlay({
+var overlay = new ol.Overlay({
   element: container
 });
-
 
 // this function needs to be altered so it inserts 'area' and 'verticalProfile'
 // when needed
@@ -57,7 +44,7 @@ function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
     '&endLat=' + endLat +
     '&endLon=' + endLon + 
     '&depth=' + depth + 
-    '&time=' + date + "T" + time.value;
+    '&time=' + date;
     return url;
 }
 
@@ -70,7 +57,7 @@ var map = new ol.Map({
         source: new ol.source.OSM()
       })
     ],
-    overlays: [popupOverlay],
+    overlays: [overlay],
     view: new ol.View({
       center: ol.proj.transform([8.8, 63.75], 'EPSG:4326', 'EPSG:3857'),
       zoom:9
@@ -78,37 +65,17 @@ var map = new ol.Map({
 }); 
 
 function updateImage(url){
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
-  );
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:9810"))
-  );
   if(map.getLayers().remove(imageLayer)){
     map.getLayers().remove(imageLayer);
   }
-  var startLat = startCoord.value.split(',',2)[1];
-  var startLon = startCoord.value.split(',',2)[0];
-  var endLat = endCoord.value.split(',',2)[1];
-  var endLon = endCoord.value.split(',',2)[0];
-  
-  // doesn't work
-  //console.log([map.getViewPortPxFromLonLat(ol.LonLat(startLon, startLat)).x - map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).x, map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).y - map.getViewPortPxFromLonLat(ol.LonLat(startLong, startLat)).y]);
-
   imageLayer = new ol.layer.Image({
     opacity: 0.95,
     source: new ol.source.ImageStatic({
       url: url,
       imageSize: [691, 541], // change to correct size
-      //imageSize: [256, 256], // change to correct size
       projection: map.getView().getProjection(),
-      /*imageExtent: ol.extent.applyTransform(
-        [8.12, 63.15, 8.9, 63.85], 
-        ol.proj.getTransform("EPSG:4326", "EPSG:3857"))*/
       imageExtent: ol.extent.applyTransform(
-        [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])], 
+        [8.12, 63.15, 8.9, 63.85], 
         ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
     })
   });
@@ -117,6 +84,8 @@ function updateImage(url){
 }
 
 //toggle custom Controls
+var toggleControls = document.getElementById('toggleControls');
+var controls = document.getElementById('controls');
 toggleControls.addEventListener('click', function(){
   var cl = controls.classList;
   if(cl.contains('showControls')){
@@ -126,10 +95,9 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
-function addDragBox(conditionObj) {
-  var conditionObj = conditionObj || ol.events.condition.never;
+function addDragBox() {
   dragBox = new ol.interaction.DragBox({
-    condition: conditionObj,
+    condition: ol.events.condition.shiftKeyOnly,
     style: new ol.style.Style({
       stroke: new ol.style.Stroke({
         color: [0, 0, 0, 1]
@@ -174,7 +142,8 @@ function displayInfo(){
   '<span>End Coords: </span>' + endCoord.value
 }
 
-//listener for submit button
+addDragBox();
+
 submit.addEventListener('click', function(evt){
   evt.preventDefault();
   var start = startCoord.value.split(',', 2);
@@ -189,17 +158,11 @@ submit.addEventListener('click', function(evt){
     displayInfo();
     updateImage(url);
   }else{
-    var args = Array.slice(arguments);
-    console.log(args);
-    for (var i = 0; i < args.length; i++) {
-      if(args[i] === null) {
-        console.log(args[i]);
-      }
-    }
-    console.error('updateImage() did not get the right parameters');
+    console.log('updateImage() did not get the right parameters');
   }
 
 },false);
+
 
 /**
  * Add a click handler to the map to render the popup.
@@ -209,31 +172,14 @@ map.on('click', function(evt) {
   var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
       coordinate, 'EPSG:3857', 'EPSG:4326'));
 
-  popupOverlay.setPosition(coordinate);
+  overlay.setPosition(coordinate);
   content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
       '</code>';
   container.style.display = 'block';
 
 });
 
-// listener for areaSelect tool
-areaSelectButton.addEventListener('click', function(evt){
-  evt.preventDefault();
-  areaSelectActive = !areaSelectActive;
-  if(areaSelectActive){
-    areaSelectButton.classList.add('buttonActive');
-    addDragBox(ol.events.condition.always);
-  } else {
-    areaSelectButton.classList.remove('buttonActive');
-    map.removeInteraction(dragBox);
-  }
-}, false);
-
-function updateDisplayedTimeSliderValue() {
-  var val = parseFloat(document.getElementById('time').value).toFixed(2);
-  if (val<10) val = "0" + val;
-  document.getElementById('timeslider').value = val;
-}
-
-document.getElementById('time').addEventListener('change', updateDisplayedTimeSliderValue);
-//document.getElementById('fader').attachEvent('addEventListener', updateDisplayedTimeSliderValue, false);
+document.querySelector('#fader').addEventListener('change', function() {
+  document.querySelector('#timeslider').value = document.querySelector('#fader').value.fix(2);
+});
+        
