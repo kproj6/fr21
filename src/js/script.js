@@ -16,6 +16,12 @@ var dragBox;
 var toggleControls = document.getElementById('toggleControls');
 var controls = document.getElementById('controls');
 proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
+/**
+ * Elements that make up the popup.
+ */
+var popupContainer = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
 
 // when working on the controls it's nice that it pops up it automatically
 if(document.getElementById('controls').hasAttribute('debug')){
@@ -23,19 +29,11 @@ if(document.getElementById('controls').hasAttribute('debug')){
 }
 
 /**
- * Elements that make up the popup.
- */
-var container = document.getElementById('popup');
-var content = document.getElementById('popup-content');
-var closer = document.getElementById('popup-closer');
-
-
-/**
  * @return {boolean} Don't follow the href.
  * Add a click handler to hide the popup.
  */
 closer.onclick = function() {
-  container.style.display = 'none';
+  popupContainer.style.display = 'none';
   closer.blur();
   return false;
 };
@@ -44,9 +42,8 @@ closer.onclick = function() {
  * Create an overlay to anchor the popup to the map.
  */
 var popupOverlay = new ol.Overlay({
-  element: container
+  element: popupContainer
 });
-
 
 // this function needs to be altered so it inserts 'area' and 'verticalProfile'
 // when needed
@@ -258,7 +255,7 @@ map.on('click', function(evt) {
   popupOverlay.setPosition(coordinate);
   content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
       '</code>';
-  container.style.display = 'block';
+  popupContainer.style.display = 'block';
 
 });
 
