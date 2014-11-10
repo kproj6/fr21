@@ -156,7 +156,7 @@ function addDragBox(conditionObj) {
     var endPolarCoord = proj4('EPSG:3785', 'EPSG:9810', evt.coordinate);
     console.log("After projecting from EPSG:3785 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
     console.log("After projecting back again to EPSG:3785: "+ proj4('EPSG:9810', 'EPSG:3785', startPolarCoord) + " - " + proj4('EPSG:9810', 'EPSG:3785', endPolarCoord) );
-    
+
     var startPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', startCoordValue));
     var endPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', evt.coordinate));
     console.log("After projecting from WGS84 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
@@ -174,6 +174,57 @@ function displayInfo(){
   '<span>End Coords: </span>' + endCoord.value
 }
 
+function addLegend(feature) {
+  var container = document.getElementById('container');
+  var imageSrc = 'img/legends/';
+  var max;
+  var min;
+  if(document.getElementById('legend')) {
+    container.removeChild(document.getElementById('legend'));
+  }
+  switch(feature) {
+    case 'salinity':
+      imageSrc += 'salinity.png';
+      max = 36;
+      min = 26;
+      break;
+    case 'temperature':
+      imageSrc += 'temperature.png';
+      max = 20;
+      min = 0;
+      break;
+    case 'current-magnitude':
+      imageSrc += 'current_magnitude.png';
+      max = 1;
+      min = 0;
+      break;
+    case 'current-direction':
+      break;
+    case 'depth':
+      imageSrc += 'depth.png'
+      max = 1000;
+      min = 0;
+      break;
+    default: 
+      console.error('No such feature:' + feature);
+  }
+  var legend = document.createElement('div');
+  legend.setAttribute('id', 'legend');
+  var img = document.createElement('img');
+  img.setAttribute('src', imageSrc);
+  var maxSpan = document.createElement('span');
+  maxSpan.classList.add('legendMax');
+  maxSpan.innerHTML = max;
+  var minSpan = document.createElement('span');
+  minSpan.classList.add('legendMin');
+  minSpan.innerHTML = min;
+  legend.appendChild(img);
+  legend.appendChild(maxSpan);
+  legend.appendChild(minSpan);
+  container.appendChild(legend);
+
+}
+
 //listener for submit button
 submit.addEventListener('click', function(evt){
   evt.preventDefault();
@@ -188,14 +239,9 @@ submit.addEventListener('click', function(evt){
     console.log(url);
     displayInfo();
     updateImage(url);
+    addLegend(measure.value);
   }else{
     var args = Array.slice(arguments);
-    console.log(args);
-    for (var i = 0; i < args.length; i++) {
-      if(args[i] === null) {
-        console.log(args[i]);
-      }
-    }
     console.error('updateImage() did not get the right parameters');
   }
 

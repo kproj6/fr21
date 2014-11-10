@@ -33,12 +33,19 @@ gulp.task('bower', function() {
     .pipe(gulp.dest('./dist/bower_components'));
 });
 
+gulp.task('images', function() {
+  gulp.src('src/img/**/*.png')
+    .pipe(gulp.dest('./dist/img'));
+  gulp.src('src/img/**/*.jpg')
+    .pipe(gulp.dest('./dist/img'));
+});
+
 gulp.task('watch', ['build'], function () {
   gulp.watch(['src/**/*.html'], ['html']);
   gulp.watch(['src/**/*.scss'], ['sass']);
   gulp.watch(['src/**/*.js'], ['scripts']);
 });
 
-gulp.task('build', ['sass', 'html', 'scripts', 'bower']);
+gulp.task('build', ['sass', 'html', 'scripts', 'bower', 'images']);
 
 gulp.task('default', ['connect', 'watch']);
