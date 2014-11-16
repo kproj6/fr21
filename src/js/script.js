@@ -16,6 +16,10 @@ var dragBox;
 var toggleControls = document.getElementById('toggleControls');
 var controls = document.getElementById('controls');
 proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
+
+/** Elements for the box layer */
+var boxControl;
+
 /**
  * Elements that make up the popup.
  */
@@ -58,6 +62,16 @@ function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
     return url;
 }
 
+var mousePositionControl = new ol.control.MousePosition({
+  coordinateFormat: ol.coordinate.createStringXY(4),
+  projection: 'EPSG:4326',
+  // comment the following two lines to have the mouse position
+  // be placed within the map.
+  //className: 'custom-mouse-position',
+  //target: document.getElementById('mouse-position'),
+  undefinedHTML: '&nbsp;'
+});
+
 var map = new ol.Map({
   target: 'map',  // The DOM element that will contains the map
     renderer: 'canvas', // Force the renderer to be used
@@ -67,12 +81,17 @@ var map = new ol.Map({
         source: new ol.source.OSM()
       })
     ],
+    projection: new ol.proj.Projection("EPSG:9810"),
+    displayProjection: new ol.proj.Projection("EPSG:9810"),
     overlays: [popupOverlay],
     view: new ol.View({
       center: ol.proj.transform([8.8, 63.75], 'EPSG:4326', 'EPSG:3857'),
       zoom:9
     })
 }); 
+
+map.addControl(mousePositionControl);
+
 
 function updateImage(url){
   console.log(ol.extent.applyTransform(
@@ -105,7 +124,7 @@ function updateImage(url){
         [8.12, 63.15, 8.9, 63.85], 
         ol.proj.getTransform("EPSG:4326", "EPSG:3857"))*/
       imageExtent: ol.extent.applyTransform(
-        [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])], 
+        [parseFloat(startLat), parseFloat(startLon), parseFloat(endLat), parseFloat(endLon)], 
         ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
     })
   });
