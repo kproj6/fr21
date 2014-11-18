@@ -1,12 +1,12 @@
 {
-  "name": "map",
+  "name": "Sintef Ocean Forecast",
   "version": "0.0.0",
-  "description": "map test",
+  "description": "web app for accessing Sintef ocean forecast data",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Anders",
+  "author": "NTNU, Kundestyrt projekt 2014 Gruppe 6",
   "license": "BSD-2-Clause",
   "devDependencies": {
     "gulp": "^3.8.8",
