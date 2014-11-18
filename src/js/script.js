@@ -17,6 +17,14 @@ var toggleControls = document.getElementById('toggleControls');
 var controls = document.getElementById('controls');
 proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
 
+/**
+ * Drawing feature of OpenLayers which allows to draw selection over the map.
+ */
+var selectorLayer = new ol.layer.Vector({
+    "source": new ol.source.Vector()
+});
+var selector;
+
 /** Elements for the box layer */
 var boxControl;
 
@@ -79,7 +87,8 @@ var map = new ol.Map({
       // Add a new Tile layer getting tiles from OpenStreetMap source
       new ol.layer.Tile({
         source: new ol.source.OSM()
-      })
+      }),
+      selectorLayer
     ],
     projection: new ol.proj.Projection("EPSG:9810"),
     displayProjection: new ol.proj.Projection("EPSG:9810"),
@@ -91,7 +100,6 @@ var map = new ol.Map({
 }); 
 
 map.addControl(mousePositionControl);
-
 
 function updateImage(url){
   console.log(ol.extent.applyTransform(
@@ -155,6 +163,10 @@ function addDragBox(conditionObj) {
   map.addInteraction(dragBox);
   dragBox.on('boxstart', function(evt){
     startCoordValue = evt.coordinate;
+    if (typeof selector != "undefined") {
+        selectorLayer.getSource().removeFeature(selector);
+        selector = undefined;
+    }
   });
   dragBox.on('boxend', function(evt){
     console.log("Before projecting: "+startCoordValue+" - "+evt.coordinate);
@@ -166,6 +178,11 @@ function addDragBox(conditionObj) {
     startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
     endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
     console.log("After projecting to LatLong: "+startCoord.value+" - "+endCoord.value);
+
+    var drawnRectangle = this.getGeometry();
+    selector = new ol.Feature(drawnRectangle);
+    selectorLayer.getSource().addFeature(selector);
+
 /*
     proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
     var startPolarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
@@ -256,6 +273,10 @@ submit.addEventListener('click', function(evt){
     displayInfo();
     updateImage(url);
     addLegend(measure.value);
+    selectorLayer.getSource().clear();
+    if (typeof selector != "undefined") {
+        selector = undefined;
+    }
   }else{
     var args = Array.slice(arguments);
     console.error('updateImage() did not get the right parameters');
@@ -288,6 +309,10 @@ areaSelectButton.addEventListener('click', function(evt){
   } else {
     areaSelectButton.classList.remove('buttonActive');
     map.removeInteraction(dragBox);
+    selectorLayer.getSource().clear();
+    if (typeof selector != "undefined") {
+        selector = undefined;
+    }
   }
 }, false);
 
