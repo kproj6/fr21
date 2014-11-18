@@ -92,7 +92,6 @@ var map = new ol.Map({
 
 map.addControl(mousePositionControl);
 
-
 function updateImage(url){
   console.log(ol.extent.applyTransform(
     [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
@@ -110,15 +109,11 @@ function updateImage(url){
   var endLat = endCoord.value.split(',',2)[1];
   var endLon = endCoord.value.split(',',2)[0];
   
-  // doesn't work
-  //console.log([map.getViewPortPxFromLonLat(ol.LonLat(startLon, startLat)).x - map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).x, map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).y - map.getViewPortPxFromLonLat(ol.LonLat(startLong, startLat)).y]);
-
   imageLayer = new ol.layer.Image({
     opacity: 0.95,
     source: new ol.source.ImageStatic({
       url: url,
-      imageSize: [691, 541], // change to correct size
-      //imageSize: [256, 256], // change to correct size
+      imageSize: [256, 256],
       projection: map.getView().getProjection(),
       /*imageExtent: ol.extent.applyTransform(
         [8.12, 63.15, 8.9, 63.85], 
@@ -142,6 +137,7 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
+// function to handle the area select tool
 function addDragBox(conditionObj) {
   var conditionObj = conditionObj || ol.events.condition.never;
   dragBox = new ol.interaction.DragBox({
@@ -157,15 +153,16 @@ function addDragBox(conditionObj) {
     startCoordValue = evt.coordinate;
   });
   dragBox.on('boxend', function(evt){
-    console.log("Before projecting: "+startCoordValue+" - "+evt.coordinate);
+    console.log("Before projecting: " + startCoordValue + " - " + evt.coordinate);
 
     //startCoord.value = ol.proj.transform(startCoordValue, 'EPSG:3857', 'EPSG:4326');
     //endCoord.value = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
     proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
 
-    startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
     endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
-    console.log("After projecting to LatLong: "+startCoord.value+" - "+endCoord.value);
+    startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
+    
+    console.log("After projecting to LatLong: " + startCoord.value + " - " + endCoord.value);
 /*
     proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
     var startPolarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
