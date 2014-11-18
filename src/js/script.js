@@ -121,12 +121,18 @@ function updateImage(url){
   // doesn't work
   //console.log([map.getViewPortPxFromLonLat(ol.LonLat(startLon, startLat)).x - map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).x, map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).y - map.getViewPortPxFromLonLat(ol.LonLat(startLong, startLat)).y]);
 
+  var selectorExtent = selector.getGeometry().getExtent();
+  var bottomLeftPoint = map.getPixelFromCoordinate([selectorExtent[0], selectorExtent[1]]);
+  var topRightPoint = map.getPixelFromCoordinate([selectorExtent[2], selectorExtent[3]]);
+  var imageResolution = [Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0])), Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0]))];
+  console.log("Requested image resolution: "+imageResolution);
+
   imageLayer = new ol.layer.Image({
     opacity: 0.95,
     source: new ol.source.ImageStatic({
       url: url,
-      imageSize: [691, 541], // change to correct size
-      //imageSize: [256, 256], // change to correct size
+      //imageSize: imageResolution,
+      imageSize: [256, 256],
       projection: map.getView().getProjection(),
       /*imageExtent: ol.extent.applyTransform(
         [8.12, 63.15, 8.9, 63.85], 
