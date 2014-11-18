@@ -2,6 +2,10 @@
   "name": "sintef-ocean-forecast",
   "version": "0.0.0",
   "description": "web app for accessing Sintef ocean forecast data",
+  "repository" :{ 
+    "type" : "git",
+    "url" : "https://github.com/kproj6/front-end"
+  }
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
