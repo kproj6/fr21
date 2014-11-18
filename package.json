@@ -1,5 +1,5 @@
 {
-  "name": "Sintef Ocean Forecast",
+  "name": "sintef-ocean-forecast",
   "version": "0.0.0",
   "description": "web app for accessing Sintef ocean forecast data",
   "main": "script.js",
