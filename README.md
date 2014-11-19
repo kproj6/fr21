@@ -18,14 +18,6 @@ then, to copy all necessary file to the dist folder and run a server on http://l
   gulp
 ```
 
-
-
-to install icons install Bower
-```
-  npm install bower -g
-  bower install
-```
-
 ##other gulp stuff
 ```gulp build```
 will copy files from the src folder and bower_components folder to the dist folder.
