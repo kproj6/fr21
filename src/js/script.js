@@ -120,8 +120,10 @@ function updateImage(url){
   
   var selectorExtent = selector.getGeometry().getExtent();
   var bottomLeftPoint = map.getPixelFromCoordinate([selectorExtent[0], selectorExtent[1]]);
+  console.log("Bottom Left point: "+bottomLeftPoint);
   var topRightPoint = map.getPixelFromCoordinate([selectorExtent[2], selectorExtent[3]]);
-  var imageResolution = [Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0])), Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0]))];
+  console.log("Top Right point: "+topRightPoint);
+  var imageResolution = [Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0])), Math.abs(Math.floor(topRightPoint[1] - bottomLeftPoint[1]))];
   console.log("Requested image resolution: "+imageResolution);
 
   imageLayer = new ol.layer.Image({
