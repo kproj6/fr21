@@ -1,9 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="http://openlayers.org/en/v3.0.0/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" type="text/css">
   <link rel="stylesheet" href="bower_components/octicons/octicons/octicons.css">
   <link rel="stylesheet" href="css/style.css">
+  <link 
+        rel="stylesheet" 
+        href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css"
+    />
   <title>OpenLayers 3 example</title>
 </head>
 <body>
@@ -38,9 +42,6 @@
           <output for="time" id="timeslider">12.00</output>
         </span>
         <label for="areaSelect">Area selector</label>
-        <button id="areaSelect">
-          <span class="mega-octicon octicon-globe"></span>
-        </button>
         <label for="startCoord">Start Coordinates (lat, lon)</label>
         <input type="text" id="startCoord" value="65.24,7.56" placeholder="0.0,1.1" required>
         <label for="endCoord">End coordinates (lat, lon)</label>
@@ -56,8 +57,8 @@
       </div>
     </div>
   </div>
-  <script src="js/ol.js"></script>
-  <script src="js/proj4.js"> </script>
+  <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+  <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
   <script src="js/script.js"> </script>
 </body>
 </html>

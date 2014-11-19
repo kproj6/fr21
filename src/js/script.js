@@ -15,50 +15,14 @@ var areaSelectActive = false;
 var dragBox;
 var toggleControls = document.getElementById('toggleControls');
 var controls = document.getElementById('controls');
-proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
 
-/**
- * Drawing feature of OpenLayers which allows to draw selection over the map.
- */
-var selectorLayer = new ol.layer.Vector({
-    "source": new ol.source.Vector()
-});
-var selector;
-
-/** Elements for the box layer */
-var boxControl;
-
-/**
- * Elements that make up the popup.
- */
-var popupContainer = document.getElementById('popup');
-var content = document.getElementById('popup-content');
-var closer = document.getElementById('popup-closer');
-
-// when working on the controls it's nice that it pops up it automatically
+/** when working on the controls it's nice that it pops up it automatically */
 if(document.getElementById('controls').hasAttribute('debug')){
   document.getElementById('controls').classList.add('showControls');
 }
 
-/**
- * @return {boolean} Don't follow the href.
- * Add a click handler to hide the popup.
- */
-closer.onclick = function() {
-  popupContainer.style.display = 'none';
-  closer.blur();
-  return false;
-};
-
-/**
- * Create an overlay to anchor the popup to the map.
- */
-var popupOverlay = new ol.Overlay({
-  element: popupContainer
-});
-
-// this function needs to be altered so it inserts 'area' and 'verticalProfile'
-// when needed
+/** this function needs to be altered so it inserts 'area' and 'verticalProfile' 
+  * when needed */
 function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
    var url = 'http://178.62.233.73:10100/feature/' + measure + '/area' +
     '?startLat=' + startLat + 
@@ -70,82 +34,58 @@ function buildUrl(measure, startLat, startLon, endLat, endLon, depth, date){
     return url;
 }
 
-var mousePositionControl = new ol.control.MousePosition({
-  coordinateFormat: ol.coordinate.createStringXY(4),
-  projection: 'EPSG:4326',
-  // comment the following two lines to have the mouse position
-  // be placed within the map.
-  //className: 'custom-mouse-position',
-  //target: document.getElementById('mouse-position'),
-  undefinedHTML: '&nbsp;'
+var map = L.map('map').setView([63.69913944135562, 8.00751220703125], 9);
+var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});       
+map.addLayer(osm);
+
+// Initialise the FeatureGroup to store editable layers
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+// Initialise the draw control and pass it the FeatureGroup of editable layers
+var drawControl = new L.Control.Draw({
+    draw : {
+        position : 'topleft',
+        polygon : false,
+        polyline : false,
+        rectangle : true,
+        circle : false,
+        marker : false
+    },
+    edit : {featureGroup: drawnItems, edit: false, remove: false}
+});
+map.addControl(drawControl);
+var lastLayer;
+var lastImageOverlay;
+map.on('draw:created', function (e) {
+    var type = e.layerType,
+        layer = e.layer;
+
+    drawnItems.addLayer(layer);
+    startCoord.value = e.layer.getLatLngs()[0].lat+","+e.layer.getLatLngs()[0].lng;
+    endCoord.value = e.layer.getLatLngs()[2].lat+","+e.layer.getLatLngs()[2].lng;
+    lastLayer=layer;
 });
 
-var map = new ol.Map({
-  target: 'map',  // The DOM element that will contains the map
-    renderer: 'canvas', // Force the renderer to be used
-    layers: [
-      // Add a new Tile layer getting tiles from OpenStreetMap source
-      new ol.layer.Tile({
-        source: new ol.source.OSM()
-      }),
-      selectorLayer
-    ],
-    projection: new ol.proj.Projection("EPSG:9810"),
-    displayProjection: new ol.proj.Projection("EPSG:9810"),
-    overlays: [popupOverlay],
-    view: new ol.View({
-      center: ol.proj.transform([8.8, 63.75], 'EPSG:4326', 'EPSG:3857'),
-      zoom:9
-    })
-}); 
-
-map.addControl(mousePositionControl);
-
 function updateImage(url){
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
-  );
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:9810"))
-  );
-  if(map.getLayers().remove(imageLayer)){
-    map.getLayers().remove(imageLayer);
-  }
-  var startLat = startCoord.value.split(',',2)[1];
-  var startLon = startCoord.value.split(',',2)[0];
-  var endLat = endCoord.value.split(',',2)[1];
-  var endLon = endCoord.value.split(',',2)[0];
-  
-  // doesn't work
-  //console.log([map.getViewPortPxFromLonLat(ol.LonLat(startLon, startLat)).x - map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).x, map.getViewPortPxFromLonLat(ol.LonLat(endLon, endLat)).y - map.getViewPortPxFromLonLat(ol.LonLat(startLong, startLat)).y]);
 
-  var selectorExtent = selector.getGeometry().getExtent();
-  var bottomLeftPoint = map.getPixelFromCoordinate([selectorExtent[0], selectorExtent[1]]);
-  console.log("Bottom Left point: "+bottomLeftPoint);
-  var topRightPoint = map.getPixelFromCoordinate([selectorExtent[2], selectorExtent[3]]);
-  console.log("Top Right point: "+topRightPoint);
-  var imageResolution = [Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0])), Math.abs(Math.floor(topRightPoint[1] - bottomLeftPoint[1]))];
-  console.log("Requested image resolution: "+imageResolution);
+  var imageUrl = url;
+  var start = startCoord.value.split(',', 2);
+  var startLat = start[1]; 
+  var startLon = start[0]; 
+  var end = endCoord.value.split(',', 2);
+  var endLat = end[1];
+  var endLon = end[0];
 
-  imageLayer = new ol.layer.Image({
-    opacity: 0.95,
-    source: new ol.source.ImageStatic({
-      url: url,
-      //imageSize: imageResolution,
-      imageSize: [256, 256],
-      projection: map.getView().getProjection(),
-      /*imageExtent: ol.extent.applyTransform(
-        [8.12, 63.15, 8.9, 63.85], 
-        ol.proj.getTransform("EPSG:4326", "EPSG:3857"))*/
-      imageExtent: ol.extent.applyTransform(
-        [parseFloat(startLat), parseFloat(startLon), parseFloat(endLat), parseFloat(endLon)], 
-        ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
-    })
-  });
+  if (lastImageOverlay!==undefined) // remove previous image
+      map.removeLayer(lastImageOverlay);
+  imageBounds = [[startLon, startLat], [endLon, endLat]];
+  lastImageOverlay = L.imageOverlay(imageUrl, imageBounds)
+  lastImageOverlay.addTo(map);
+  drawnItems.removeLayer(lastLayer);
 
-  map.addLayer(imageLayer);
 }
 
 //toggle custom Controls
@@ -158,54 +98,7 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
-function addDragBox(conditionObj) {
-  var conditionObj = conditionObj || ol.events.condition.never;
-  dragBox = new ol.interaction.DragBox({
-    condition: conditionObj,
-    style: new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [0, 0, 0, 1]
-      })
-    })
-  });
-  map.addInteraction(dragBox);
-  dragBox.on('boxstart', function(evt){
-    startCoordValue = evt.coordinate;
-    if (typeof selector != "undefined") {
-        selectorLayer.getSource().removeFeature(selector);
-        selector = undefined;
-    }
-  });
-  dragBox.on('boxend', function(evt){
-    console.log("Before projecting: "+startCoordValue+" - "+evt.coordinate);
-
-    //startCoord.value = ol.proj.transform(startCoordValue, 'EPSG:3857', 'EPSG:4326');
-    //endCoord.value = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-    proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
-
-    startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
-    endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
-    console.log("After projecting to LatLong: "+startCoord.value+" - "+endCoord.value);
-
-    var drawnRectangle = this.getGeometry();
-    selector = new ol.Feature(drawnRectangle);
-    selectorLayer.getSource().addFeature(selector);
-
-/*
-    proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
-    var startPolarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
-    var endPolarCoord = proj4('EPSG:3785', 'EPSG:9810', evt.coordinate);
-    console.log("After projecting from EPSG:3785 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
-    console.log("After projecting back again to EPSG:3785: "+ proj4('EPSG:9810', 'EPSG:3785', startPolarCoord) + " - " + proj4('EPSG:9810', 'EPSG:3785', endPolarCoord) );
-
-    var startPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', startCoordValue));
-    var endPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', evt.coordinate));
-    console.log("After projecting from WGS84 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
-    console.log("After projecting back again to WGS84: "+ proj4('EPSG:9810', 'EPSG:4326', startPolarCoord).reverse() + " - " + proj4('EPSG:9810', 'EPSG:4326', endPolarCoord).reverse() );
-*/
-  });
-}
-
+/** Displays info in the status bar about the current location */
 function displayInfo(){
   infoBar.innerHTML =
   '<span>Feature: </span>' + measure.value +
@@ -215,6 +108,7 @@ function displayInfo(){
   '<span>End Coords: </span>' + endCoord.value
 }
 
+/** It adds the legend of the colors in the overlays */
 function addLegend(feature) {
   var container = document.getElementById('container');
   var imageSrc = 'img/legends/';
@@ -270,59 +164,22 @@ function addLegend(feature) {
 submit.addEventListener('click', function(evt){
   evt.preventDefault();
   var start = startCoord.value.split(',', 2);
-  var startLat = start[0]; 
-  var startLon = start[1]; 
+  var startLat = parseFloat(start[0]); 
+  var startLon = parseFloat(start[1]); 
   var end = endCoord.value.split(',', 2);
-  var endLat = end[0];
-  var endLon = end[1];
-  var url = buildUrl(measure.value, startLat, startLon, endLat, endLon, depth.value, date.value);
+  var endLat = parseFloat(end[0]);
+  var endLon = parseFloat(end[1]);
+  var url = buildUrl(measure.value, startLat+0.022, startLon+0.01, endLat+0.022, endLon+0.01, depth.value, date.value);
   if(form.checkValidity()){
     console.log(url);
     displayInfo();
     updateImage(url);
     addLegend(measure.value);
-    selectorLayer.getSource().clear();
-    if (typeof selector != "undefined") {
-        selector = undefined;
-    }
   }else{
     var args = Array.slice(arguments);
     console.error('updateImage() did not get the right parameters');
   }
-
 },false);
-
-/**
- * Add a click handler to the map to render the popup.
- */
-map.on('click', function(evt) {
-  var coordinate = evt.coordinate;
-  var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-      coordinate, 'EPSG:3857', 'EPSG:4326'));
-
-  popupOverlay.setPosition(coordinate);
-  content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
-      '</code>';
-  popupContainer.style.display = 'block';
-
-});
-
-// listener for areaSelect tool
-areaSelectButton.addEventListener('click', function(evt){
-  evt.preventDefault();
-  areaSelectActive = !areaSelectActive;
-  if(areaSelectActive){
-    areaSelectButton.classList.add('buttonActive');
-    addDragBox(ol.events.condition.always);
-  } else {
-    areaSelectButton.classList.remove('buttonActive');
-    map.removeInteraction(dragBox);
-    selectorLayer.getSource().clear();
-    if (typeof selector != "undefined") {
-        selector = undefined;
-    }
-  }
-}, false);
 
 function updateDisplayedTimeSliderValue() {
   var val = parseFloat(document.getElementById('time').value).toFixed(2);
@@ -331,4 +188,3 @@ function updateDisplayedTimeSliderValue() {
 }
 
 document.getElementById('time').addEventListener('change', updateDisplayedTimeSliderValue);
-//document.getElementById('fader').attachEvent('addEventListener', updateDisplayedTimeSliderValue, false);
