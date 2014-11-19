@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="vendor/octicons/octicons.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.draw/leaflet.draw.css" />
-  <title>OpenLayers 3 example</title>
+  <title>SINTEF SINMOD 2.0</title>
 </head>
 <body>
   <div id="container">
@@ -20,7 +20,7 @@
         <select id="measure" name="">
           <option value="salinity">Salinity</option>
           <option value="temperature">Temperature</option>
-          <option value="current-magnitude">Curent</option>
+          <option value="current-magnitude">Current</option>
           <option value="depth">Depth</option>
         </select>
         <label for="depth">Depth in metres</label>
@@ -47,13 +47,8 @@
         <button id="submit">Submit</button>
       </form>
     </div>
+    <div id="map" class="map"></div>
     <div id="infoBar"></div>
-    <div id="map" class="map">
-      <div id="popup" class="ol-popup">
-          <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-          <div id="popup-content"></div>
-      </div>
-    </div>
   </div>
   <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
   <script src="http://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>

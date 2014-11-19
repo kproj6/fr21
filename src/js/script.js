@@ -1,4 +1,3 @@
-'use scrict';
 var imageLayer; // global so we can removed it later
 var depth = document.getElementById('depth');
 var measure = document.getElementById('measure');
@@ -60,13 +59,18 @@ map.addControl(drawControl);
 var lastLayer;
 var lastImageOverlay;
 map.on('draw:created', function (e) {
-    var type = e.layerType,
-        layer = e.layer;
+  var type = e.layerType,
+      layer = e.layer;
 
-    drawnItems.addLayer(layer);
-    startCoord.value = e.layer.getLatLngs()[0].lat+","+e.layer.getLatLngs()[0].lng;
-    endCoord.value = e.layer.getLatLngs()[2].lat+","+e.layer.getLatLngs()[2].lng;
-    lastLayer=layer;
+  drawnItems.addLayer(layer);
+  startCoord.value = e.layer.getLatLngs()[0].lat+","+e.layer.getLatLngs()[0].lng;
+  endCoord.value = e.layer.getLatLngs()[2].lat+","+e.layer.getLatLngs()[2].lng;
+  lastLayer=layer;
+});
+
+map.on('draw:drawstart', function (e) {
+    if (lastLayer!==undefined)
+      drawnItems.removeLayer(lastLayer);
 });
 
 function updateImage(url){
@@ -78,12 +82,13 @@ function updateImage(url){
   var endLat = end[1];
   var endLon = end[0];
 
-  if (lastImageOverlay!==undefined) // remove previous image
-      map.removeLayer(lastImageOverlay);
+  if (lastImageOverlay!==undefined) 
+      map.removeLayer(lastImageOverlay); // removes previous image, if there was
   imageBounds = [[startLon, startLat], [endLon, endLat]];
   lastImageOverlay = L.imageOverlay(imageUrl, imageBounds)
   lastImageOverlay.addTo(map);
-  drawnItems.removeLayer(lastLayer);
+  lastImageOverlay.setOpacity(0.95);
+  drawnItems.removeLayer(lastLayer); // removes the rectangle just drawed
 }
 
 //toggle custom Controls
@@ -154,7 +159,6 @@ function addLegend(feature) {
   legend.appendChild(maxSpan);
   legend.appendChild(minSpan);
   container.appendChild(legend);
-
 }
 
 //listener for submit button
@@ -178,6 +182,7 @@ submit.addEventListener('click', function(evt){
   }
 },false);
 
+/** Needed to update the displayed balue of the time slider, in the label */
 function updateDisplayedTimeSliderValue() {
   var val = parseFloat(document.getElementById('time').value).toFixed(2);
   if (val<10) val = "0" + val;
