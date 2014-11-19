@@ -84,46 +84,6 @@ function updateImage(url){
   lastImageOverlay = L.imageOverlay(imageUrl, imageBounds)
   lastImageOverlay.addTo(map);
   drawnItems.removeLayer(lastLayer);
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
-  );
-  console.log(ol.extent.applyTransform(
-    [parseFloat(startCoord.value.split(',',2)[1]), parseFloat(startCoord.value.split(',',2)[0]), parseFloat(endCoord.value.split(',',2)[1]), parseFloat(endCoord.value.split(',',2)[0])],
-    ol.proj.getTransform("EPSG:4326", "EPSG:9810"))
-  );
-  if(map.getLayers().remove(imageLayer)){
-    map.getLayers().remove(imageLayer);
-  }
-  var startLat = startCoord.value.split(',',2)[1];
-  var startLon = startCoord.value.split(',',2)[0];
-  var endLat = endCoord.value.split(',',2)[1];
-  var endLon = endCoord.value.split(',',2)[0];
-  
-  var selectorExtent = selector.getGeometry().getExtent();
-  var bottomLeftPoint = map.getPixelFromCoordinate([selectorExtent[0], selectorExtent[1]]);
-  console.log("Bottom Left point: "+bottomLeftPoint);
-  var topRightPoint = map.getPixelFromCoordinate([selectorExtent[2], selectorExtent[3]]);
-  console.log("Top Right point: "+topRightPoint);
-  var imageResolution = [Math.abs(Math.floor(topRightPoint[0] - bottomLeftPoint[0])), Math.abs(Math.floor(topRightPoint[1] - bottomLeftPoint[1]))];
-  console.log("Requested image resolution: "+imageResolution);
-
-  imageLayer = new ol.layer.Image({
-    opacity: 0.95,
-    source: new ol.source.ImageStatic({
-      url: url,
-      imageSize: [256, 256],
-      projection: map.getView().getProjection(),
-      /*imageExtent: ol.extent.applyTransform(
-        [8.12, 63.15, 8.9, 63.85], 
-        ol.proj.getTransform("EPSG:4326", "EPSG:3857"))*/
-      imageExtent: ol.extent.applyTransform(
-        [parseFloat(startLat), parseFloat(startLon), parseFloat(endLat), parseFloat(endLon)], 
-        ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
-    })
-  });
->>>>>>> 8b67fd7854df65eda0450ef5b961e1bc19f1f5cd
-
 }
 
 //toggle custom Controls
@@ -136,58 +96,6 @@ toggleControls.addEventListener('click', function(){
   }
 },false);
 
-/** Displays info in the status bar about the current location */
-// function to handle the area select tool
-function addDragBox(conditionObj) {
-  var conditionObj = conditionObj || ol.events.condition.never;
-  dragBox = new ol.interaction.DragBox({
-    condition: conditionObj,
-    style: new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: [0, 0, 0, 1]
-      })
-    })
-  });
-  map.addInteraction(dragBox);
-  dragBox.on('boxstart', function(evt){
-    startCoordValue = evt.coordinate;
-    if (typeof selector != "undefined") {
-        selectorLayer.getSource().removeFeature(selector);
-        selector = undefined;
-    }
-  });
-  dragBox.on('boxend', function(evt){
-    console.log("Before projecting: " + startCoordValue + " - " + evt.coordinate);
-
-    //startCoord.value = ol.proj.transform(startCoordValue, 'EPSG:3857', 'EPSG:4326');
-    //endCoord.value = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-    proj4.defs("WGS84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
-
-    endCoord.value = proj4('EPSG:3785', 'WGS84', evt.coordinate).reverse();
-    startCoord.value = proj4('EPSG:3785', 'WGS84', startCoordValue).reverse();
-    console.log("After projecting to LatLong: " + startCoord.value + " - " + endCoord.value);
-    console.log("After projecting to LatLong: "+startCoord.value+" - "+endCoord.value);
-
-    var drawnRectangle = this.getGeometry();
-    selector = new ol.Feature(drawnRectangle);
-    selectorLayer.getSource().addFeature(selector);
-
-/*
-    proj4.defs("EPSG:9810", "+proj=stere +lat_ts=60 +lat_0=90 +lon_0=58 +k_0=1.0 +x_0=2412853.25 +y_0=1840933.25 +a=6370000 +b=6370000");
-    var startPolarCoord = proj4('EPSG:3785', 'EPSG:9810', startCoordValue);
-    var endPolarCoord = proj4('EPSG:3785', 'EPSG:9810', evt.coordinate);
-    console.log("After projecting from EPSG:3785 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
-    console.log("After projecting back again to EPSG:3785: "+ proj4('EPSG:9810', 'EPSG:3785', startPolarCoord) + " - " + proj4('EPSG:9810', 'EPSG:3785', endPolarCoord) );
-
-    var startPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', startCoordValue));
-    var endPolarCoord = proj4('EPSG:4326', 'EPSG:9810', proj4('EPSG:3785', 'EPSG:4326', evt.coordinate));
-    console.log("After projecting from WGS84 to PS-A: "+startPolarCoord+" - "+endPolarCoord);
-    console.log("After projecting back again to WGS84: "+ proj4('EPSG:9810', 'EPSG:4326', startPolarCoord).reverse() + " - " + proj4('EPSG:9810', 'EPSG:4326', endPolarCoord).reverse() );
-*/
-  });
-}
-
->>>>>>> 8b67fd7854df65eda0450ef5b961e1bc19f1f5cd
 function displayInfo(){
   infoBar.innerHTML =
   '<span>Feature: </span>' + measure.value +
